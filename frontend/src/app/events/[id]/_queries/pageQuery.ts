@@ -7,6 +7,12 @@ query ($id: ID!) {
         ... on Event {
             name
             date
+            program {
+                speaker
+                startTime
+                endTime
+                __typename
+            }
         }
     }
 }`;
