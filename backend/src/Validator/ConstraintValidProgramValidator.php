@@ -26,12 +26,23 @@ final class ConstraintValidProgramValidator extends ConstraintValidator
 			throw new UnexpectedValueException($value, Event::class);
 		}
 
-		// TODO: Ensure no overlapping speech times.
-		// At any given moment during the event, only one speech should be occurring.
-		// If overlaps are detected, add the following violation to the context 
-		// to display an appropriate error message to the API consumer.
-		$this->context
-			->buildViolation($constraint->overlappingSpeechesMessage)
-			->addViolation();
+        $program = $value->getProgram();
+
+        $speeches = $program->toArray();
+        usort($speeches, function ($a, $b) {
+            return $a->getStartTime() <=> $b->getStartTime();
+        });
+
+        for ($i = 0; $i < count($speeches) - 1; $i++) {
+            $currentSpeech = $speeches[$i];
+            $nextSpeech = $speeches[$i + 1];
+
+            if ($currentSpeech->getEndTime() > $nextSpeech->getStartTime()) {
+                $this->context
+                    ->buildViolation($constraint->overlappingSpeechesMessage)
+                    ->addViolation();
+                break;
+            }
+        }
 	}
 }

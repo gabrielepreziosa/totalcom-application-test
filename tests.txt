@@ -1,0 +1,21 @@
+query ($key: String!, $queryString: String) {
+  event(key: $key) {
+    id
+    name
+    date
+    participants(queryString: $queryString)
+    program {
+      speaker
+      startTime
+      endTime
+      __typename
+    }
+    __typename
+  }
+}
+
+
+{
+  "key": "70664d2f-21a3-3868-8d52-488cd40333a8",
+  "queryString": "gusikowski"
+}
